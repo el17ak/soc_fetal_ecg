@@ -8,5 +8,7 @@ int main(void){
 	double **whitened_data;
 	whitened_data = whiten(data, SIZE_N, SIZE_M);
 
+	double **transformed_data;
+
 	printf("Hello");
 }

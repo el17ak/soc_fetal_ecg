@@ -3,9 +3,9 @@ double **whiten(int data[][], int SIZE_N, int SIZE_M){
 
 	//Allocate memory for the result matrix (N x M)
 	double **res;
-	res = malloc(sizeof(float*) * SIZE_N);
+	res = malloc(sizeof(double*) * SIZE_N);
 	for(int i = 0; i < SIZE_M; i++){
-		res[i] = malloc(sizeof(float*) * SIZE_M);
+		res[i] = malloc(sizeof(double*) * SIZE_M);
 	}
 
 	//Compute mean row vector (1 x M) of the data matrix
@@ -24,5 +24,4 @@ double **whiten(int data[][], int SIZE_N, int SIZE_M){
 
 
 	return res;
-
 }
