@@ -63,6 +63,7 @@ float **substract_matrices(float **mat_a, float **mat_b, unsigned short size[2])
 // Multiply a first matrix (A x B) by a second matrix (B x C)
 float **multiply_matrices(float **mat_a, float **mat_b, unsigned short sizes[3]){
 	float **result;
+	float *res;
 	int i, j, k;
 		// FPU implementation (no FPGA)
 		/*for(j = 0; j < sizes[2]; j++){
@@ -181,10 +182,15 @@ float **multiply_matrices(float **mat_a, float **mat_b, unsigned short sizes[3])
 	while ((*(DMA_base_ptr + DMA2_STATUS_OFFSET) & LENGTH_ZERO_MASK) == 0){}
 
 	// get the data back
-	memcpy((void*)result, (const void*)hps_onchip_ptr, 4*16384);
-
+	memcpy((void*)res, (const void*)hps_onchip_ptr, 4*16384);
+	for(i = 0; i < sizes[0]; i++){
+		for(j = 0; j < sizes[2]; j++){
+			result[i][j] = res[(i*sizes[2])+j];
+		}
+	}
+	}
 	return result;
-}}
+}
 
 
 // Subtract the same one value from each element in a matrix

@@ -15,7 +15,7 @@ float **whiten(int **data, int SIZE_N, int SIZE_M){
 	float **vector_t;
 	float **w_matrix;
 	float **product;
-	float **mult_term, **mult_res;
+	float **mult_term, mult_res;
 
 	//Allocate memory for the result matrix (N x M)
 	float **res;
@@ -57,7 +57,6 @@ float **whiten(int **data, int SIZE_N, int SIZE_M){
 			sum[j] = sum[j] + data[i][j];
 		}
 		HPS_ResetWatchdog();
-		//printf("%d\n", sum[j]);
 		mean[j] = (sum[j]/SIZE_N);
 		HPS_ResetWatchdog();
 		for(k = 0; k < SIZE_N; k++){
@@ -98,9 +97,9 @@ float **whiten(int **data, int SIZE_N, int SIZE_M){
 		//Find the corresponding eigenvalue to the eigenvector
 		eigenvalues[i] = multiply_matrices(multiply_matrices(vector_t, covariance_matrix, size_d), vectors[1], size_e)[0][0];
 
-		mult_term = multiply_matrices(vector_t, vectors[i], size_e)[0][0];
+		mult_term = multiply_matrices(vector_t, vectors[i], size_e);
 		__asm{
-			VMUL mult_res, eigenvalues[i], mult_term
+			VMUL.F32 mult_res, eigenvalues[i], mult_term[0][0]
 		}
 		//Update the covariance matrix by removing some of the influence of the vector just calculated
 		covariance_matrix = substract_matrix_scalar(covariance_matrix, mult_res, size_f);
