@@ -44,14 +44,14 @@
 							</tool>
 							<tool id="com.arm.tool.c.linker.1756163450" name="ARM Linker 5" superClass="com.arm.tool.c.linker">
 								<option id="com.arm.tool.c.linker.option.cpu.1330136429" name="Target CPU (--cpu)" superClass="com.arm.tool.c.linker.option.cpu" value="Cortex-A9" valueType="string"/>
-								<option id="com.arm.tool.c.linker.option.entry.1057315743" superClass="com.arm.tool.c.linker.option.entry" value="__main" valueType="string"/>
-								<option id="com.arm.tool.c.linker.option.scatter.353703829" superClass="com.arm.tool.c.linker.option.scatter" value="${workspace_loc}\ELEC5620M-Resources\ScatterFiles\DDRRomRamIRQ.scat" valueType="string"/>
+								<option id="com.arm.tool.c.linker.option.entry.1057315743" name="Image entry point (--entry)" superClass="com.arm.tool.c.linker.option.entry" value="__main" valueType="string"/>
+								<option id="com.arm.tool.c.linker.option.scatter.353703829" name="Scatter file (--scatter)" superClass="com.arm.tool.c.linker.option.scatter" value="${workspace_loc}\ELEC5620M-Resources\ScatterFiles\DDRRomRamIRQ.scat" valueType="string"/>
 							</tool>
 							<tool id="com.arm.tool.librarian.265838967" name="ARM Librarian 5" superClass="com.arm.tool.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Drivers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="DebugConfig|Drivers" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 					</sourceEntries>
 				</configuration>

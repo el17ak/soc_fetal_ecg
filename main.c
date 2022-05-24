@@ -55,13 +55,13 @@ unsigned int *hps_onchip_base;
 #define WAIT {}
 
 // Bluetooth disconnection Interrupt Service Routine
-void bluetoothISR(HPSIRQSource interruptID, bool isInit, void* initParams) {
+/*void bluetoothISR(HPSIRQSource interruptID, bool isInit, void* initParams) {
     if (!isInit) {
     	waitConnection();
     }
     //Reset watchdog.
     HPS_ResetWatchdog();
-}
+}*/
 
 int main(void){
 	unsigned short SIZE_N = 8;
@@ -72,6 +72,7 @@ int main(void){
 
 	float **whitened_data;
 	float **transformed_data; // (C x M)
+	float **show_data;
 
 	int i;
 	time_t mytime = time(NULL);
@@ -81,11 +82,14 @@ int main(void){
 	data = (int**)malloc(sizeof(int*) * SIZE_N);
 	for(i = 0; i < SIZE_N; i++) data[i] = (int*)malloc(sizeof(int) * SIZE_M);
 
+	show_data = (float**)malloc(sizeof(float*) * SIZE_N);
+	for(i = 0; i < SIZE_N; i++) show_data[i] = (float*)malloc(sizeof(float) * SIZE_M);
+
 	//Initialise LCD
 	LT24_initialise(0xFF200060, 0xFF200080);
 	HPS_ResetWatchdog();
 
-	//Initialise IRQs
+	/*//Initialise IRQs
 	HPS_IRQ_initialise(NULL);
 	HPS_ResetWatchdog();
 
@@ -105,13 +109,15 @@ int main(void){
 
 	// HPS onchip ram
 	hps_onchip_base = (unsigned int *)0xFFFF0000;
+	*/
 
 	while(1){
 		//How to retrieve data from FPGA input?
 
 		//============================================
-		int i, j ;
+		int j, k;
 
+		/*
 		// clear onchip memory to make sure transfer back from FPGA works
 		for (i=0; i<512; i++){
 			*(hps_onchip_base+i) = 0 ;
@@ -134,34 +140,37 @@ int main(void){
 		while ((*(h2p_lw_base + DMA2_STATUS_OFFSET) & LENGTH_ZERO_MASK) == 0) WAIT;
 		// finish timing the transfer
 		t = ctime(&mytime);
+		*/
 
 		//data = read_matrix(&rows, &cols, "sub01_fecg1.txt");
 		for(i = 0; i < SIZE_N; i++){
 			for(j = 0; j < SIZE_M; j++){
-				data[i][j] = in_data[(i*SIZE_M)+j];
-				//data[i][j] = (0x8000&(sub01_fecg1[(j*8)+i]) ? (int)(0x7FFF&(sub01_fecg1[(j*8)+i]))-0x8000 : (sub01_fecg1[(j*8)+i]));
+				//data[i][j] = in_data[(i*SIZE_M)+j];
+				data[i][j] = (0x8000&(sub01_fecg1[(j*8)+i]) ? (int)(0x7FFF&(sub01_fecg1[(j*8)+i]))-0x8000 : (sub01_fecg1[(j*8)+i]));
 			}
 		}
 
 		HPS_ResetWatchdog();
 
 
-		/*for(j = 0; j < SIZE_N; j++){
+		for(j = 0; j < SIZE_N; j++){
 			for(k = 0; k < SIZE_M; k++){
-				printf("%d ", data[j][k]);
+				show_data[j][k] = (float)data[j][k];
+				printf("%f ", show_data[j][k]);
 			}
 			printf("\n");
-		}*/
+		}
 
-		printf("Whitening\n");
+		/*printf("Whitening\n");
 		whitened_data = whiten(data, SIZE_N, SIZE_M);
 		printf("Transforming\n");
-		transformed_data = transform(whitened_data, SIZE_N, SIZE_M, SIZE_C);
+		transformed_data = transform(whitened_data, SIZE_N, SIZE_M, SIZE_C);*/
+
 
 		// Display a single IC of the signal
-		display_set(transformed_data[0], 512);
+		display_set(show_data, SIZE_M);
 
-		// DMA write local-to-fpga
+		/*// DMA write local-to-fpga
 		// clear fpga memory (to make sure the DMA happens)
 		for (i=0; i<512; i++){
 			*(sram_base+i) = 0 ;
@@ -194,7 +203,7 @@ int main(void){
 		*(h2p_lw_base + DMA1_CNTL_OFFSET) = 0x008C;
 		while ((*(h2p_lw_base + DMA1_STATUS_OFFSET) & LENGTH_ZERO_MASK) == 0) WAIT;
 		// finish timing the transfer
-		t = ctime(&mytime);
+		t = ctime(&mytime);*/
 	}
 
 	//Free allocated memory for input data
