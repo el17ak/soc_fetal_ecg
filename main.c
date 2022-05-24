@@ -5,6 +5,7 @@
 #include "display.h"
 #include "../Drivers/HPS_Watchdog/HPS_Watchdog.h"
 #include "../Drivers/DE1SoC_LT24/DE1SoC_LT24.h"
+#include "../Drivers/HPS_IRQ/HPS_IRQ.h"
 #include "sub01_fecg1.h"
 #include <time.h>
 
@@ -53,6 +54,15 @@ unsigned int *h2p_lw_base;
 unsigned int *hps_onchip_base;
 #define WAIT {}
 
+// Bluetooth disconnection Interrupt Service Routine
+void bluetoothISR(HPSIRQSource interruptID, bool isInit, void* initParams) {
+    if (!isInit) {
+    	waitConnection();
+    }
+    //Reset watchdog.
+    HPS_ResetWatchdog();
+}
+
 int main(void){
 	unsigned short SIZE_N = 8;
 	unsigned short SIZE_M = 512;
@@ -73,6 +83,15 @@ int main(void){
 
 	//Initialise LCD
 	LT24_initialise(0xFF200060, 0xFF200080);
+	HPS_ResetWatchdog();
+
+	//Initialise IRQs
+	HPS_IRQ_initialise(NULL);
+	HPS_ResetWatchdog();
+
+	// Configure Push Buttons to interrupt on press
+	// Register interrupt handler for keys
+	HPS_IRQ_registerHandler(IRQ_FPGA18, bluetoothISR);
 	HPS_ResetWatchdog();
 
 	//============================================
